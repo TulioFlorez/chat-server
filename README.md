@@ -62,10 +62,10 @@ Before running the application, ensure you have the following installed:
 
 Basic authentication is used for accessing the endpoints. Users USER1 and USER2 have regular access, while ADMIN has administrative privileges like create chatRooms.
 
-##Credentials
-USER1: username: user1, password: chatpassword
-USER2: username: user2, password: newpassword
-ADMIN: username: admin, password: adminpassword
+#Credentials
+- **USER1**: username: user1, password: chatpassword
+- **USER2**: username: user2, password: newpassword
+- **ADMIN**: username: admin, password: adminpassword
 
 
 
