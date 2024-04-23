@@ -35,32 +35,24 @@ Before running the application, ensure you have the following installed:
 - Spring Boot Starter WebSocket
 - Pojo Tester (for testing)
 
-## Development Setup
+## Development Setup & Execution
 
 1. Clone the repository.
 2. Install Java 11 and Maven if not already installed.
 3. Build the project using `mvn clean install`.
 4. Run the application using `mvn spring-boot:run`.
-
-### Execution
-
-1. Clone the repository.
-2. Install Java 11 and Maven if not already installed.
-3. Build the project using `mvn clean install`.
-4. Run the application using `mvn spring-boot:run`.
-
 
 
 ### Endpoints
 ## ChatRoomController
 
-- **POST /api/chatrooms**: Create a new chat room (usea basi credential USER ADMIN)
+- **POST /api/chatrooms**: Create a new chat room (user basic credential role ADMIN)
 
 ### MessageController
 
-- **GET /api/messages**: Get all messages
-- **POST /api/messages**: Send a message (by user)
-- **DELETE /api/messages**: Delete the last message sent by the current user(by user)
+- **GET /api/messages**: Get all messages (only user autenticated)
+- **POST /api/messages**: Send a message (only user autenticated)
+- **DELETE /api/messages**: Delete the last message sent by the current user(by role user)
 
 ### WebSocket
 
@@ -70,7 +62,10 @@ Before running the application, ensure you have the following installed:
 
 Basic authentication is used for accessing the endpoints. Users USER1 and USER2 have regular access, while ADMIN has administrative privileges like create chatRooms.
 
-
+##Credentials
+USER1: username: user1, password: chatpassword
+USER2: username: user2, password: newpassword
+ADMIN: username: admin, password: adminpassword
 
 
 
