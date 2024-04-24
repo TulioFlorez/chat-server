@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.chatserver.dto.ChatDto;
 import com.example.chatserver.dto.ChatRoomDto;
 import com.example.chatserver.dto.MessageDto;
+import com.example.chatserver.exception.ChatRoomNotFoundException;
 import com.example.chatserver.model.ChatRoom;
 import com.example.chatserver.model.Message;
 import com.example.chatserver.repository.ChatRoomRepository;
@@ -42,55 +43,61 @@ public class MessageServiceImpl implements MessageService {
 	 * @param message The message provided by the user
 	 * @return The sent message saved in the database
 	 */
-	@Override
 	public Message sentMessage(MessageDto message) {
 
-		   // Obtener el nombre de la sala de chat del DTO
-        String roomName = message.getChatRoom();
-        
-        // Buscar la sala de chat por su nombre en la base de datos
-        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findByName(roomName);
-        
-        // Verificar si la sala de chat existe
-        if (optionalChatRoom.isPresent()) {
-            // Crear una entidad de mensaje y asignar el contenido proporcionado
-            Message messageEntity = new Message();
-            messageEntity.setUser(userService.getCurrentUsername()); // Obtener el usuario actual
-            messageEntity.setContent(message.getContent());
-            messageEntity.setChatRoom(optionalChatRoom.get()); // Establecer la sala de chat en el mensaje
+	    // Get the chat room name from the DTO
+	    String roomName = message.getChatRoom();
+	    
+	    // Search for the chat room by its name in the database
+	    Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findByName(roomName);
+	    
+	    // Check if the chat room exists
+	    if (optionalChatRoom.isPresent()) {
+	        // Create a message entity and set the provided content
+	        Message messageEntity = new Message();
+	        messageEntity.setUser(userService.getCurrentUsername()); 
+	        messageEntity.setContent(message.getContent());
+	        messageEntity.setChatRoom(optionalChatRoom.get()); 
 
-            // Guardar el mensaje en la base de datos y devolverlo
-            return messageRepository.save(messageEntity);
-        } else {
-            // Manejar el caso en el que la sala de chat no existe
-            throw new IllegalArgumentException("Chat room '" + roomName + "' does not exist.");
-        }
-        
+	        // Save the message in the database and return it
+	        return messageRepository.save(messageEntity);
+	    } else {
+	    	// Handle the case where the chat room does not exist
+	        throw new ChatRoomNotFoundException("Chat room '" + roomName + "' does not exist.");
+	    }
 	}
-    
+	
 	@Override
 	public ChatRoomDto RetrieveMessagesbyRoom(String chatRoomName) {
-	    // Recuperar mensajes de la sala de chat específica
+	    // Retrieve messages from the specific chat room
 	    List<Message> messages = messageRepository.findByChatRoomNameOrderByCreatedAtAsc(chatRoomName);
 	    
-	    // Mapear mensajes a objetos ChatDto
+	    // Map messages to ChatDto objects
 	    List<ChatDto> chatDtos = messages.stream()
-	                                     .map(message -> {
-	                                         ChatDto chatDto = new ChatDto();
-	                                         chatDto.setUser(message.getUser());
-	                                         chatDto.setMessage(message.getContent());
-	                                         return chatDto;
-	                                     })
+	                                     .map(this::mapToChatDto)
 	                                     .collect(Collectors.toList());
 	    
-	    // Crear un ChatRoomDto con el nombre de la sala y la lista de mensajes mapeados
+	    // Create a ChatRoomDto with the name of the room and the mapped message list
 	    ChatRoomDto chatRoomDto = new ChatRoomDto();
 	    chatRoomDto.setRoom(chatRoomName);
 	    chatRoomDto.setChat(chatDtos);
-
-	    // Devolver una lista que contenga el ChatRoomDto creado
-	    return chatRoomDto;
-	    
-	}
 	
+	    return chatRoomDto;
+	}
+
+
+	@Override
+	public void deleteLastUserMessage() {
+		Message lastUserMessage = messageRepository.findFirstByUserOrderByCreatedAtDesc(userService.getCurrentUsername());
+        if (lastUserMessage != null) {
+            messageRepository.delete(lastUserMessage);
+        }
+    }
+	
+	private ChatDto mapToChatDto(Message message) {
+	    ChatDto chatDto = new ChatDto();
+	    chatDto.setUser(message.getUser());
+	    chatDto.setMessage(message.getContent());
+	    return chatDto;
+	}
 }

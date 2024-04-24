@@ -12,6 +12,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
 
 	 @Bean
 	    @Override
@@ -43,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http
 	            .authorizeRequests()
+	                .antMatchers("/api/chatrooms/**").hasRole("ADMIN")
 	                .antMatchers("/api/messages").authenticated() // Rutas autenticadas
 	                .anyRequest().permitAll() // Otras rutas permitidas sin autenticación
 	                .and()

@@ -14,7 +14,6 @@ public class ChatController {
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public Message send(Message message) {
-        // Aquí puedes procesar el mensaje recibido y realizar cualquier lógica necesaria
         return message;
     }
 }

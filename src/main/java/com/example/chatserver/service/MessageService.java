@@ -6,7 +6,8 @@ import com.example.chatserver.model.Message;
 
 public interface MessageService {
 	
-	Message sentMessage(MessageDto message);
+	public Message sentMessage(MessageDto message);
 	ChatRoomDto RetrieveMessagesbyRoom(String chatRoomName);
+	void deleteLastUserMessage();
 
 }

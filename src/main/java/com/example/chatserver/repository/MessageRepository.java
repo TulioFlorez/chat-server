@@ -10,5 +10,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	
     // Método para recuperar mensajes por el nombre de la sala de chat, ordenados desde el primero hasta el último
     List<Message> findByChatRoomNameOrderByCreatedAtAsc(String chatRoomName);
-
+    
+     Message findFirstByUserOrderByCreatedAtDesc(String username);
 }
+
